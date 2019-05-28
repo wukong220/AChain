@@ -20,21 +20,21 @@ const int Type_ellipsoids = 1;				//atom type of ellipsoidstacles
 const int MID_chain = 1;					//Mollecule ID of chains
 const int MID_ellipsoids = 2 ;				//Mollecule ID of ellipsoids
 
-const double L_box = 70.0;					//Lengh of the box
-const double n_box = 3;						//For dense system
+const double L_box = 100.0;					//Lengh of the box
+const double n_box = 2;						//For dense system
 
 //ellipsoidstacle setup
 const int ellipsoidsflag = 1;			//ellipsoidal finite size 
 const int density = 1.0;			//Ellipsoidal density
-vector<double> shape0(3,1);			//shape wanted
-vector<double> shape(3,2);			//shape of ellipsoids
+vector<double> shape0(3,5);			//shape wanted
+vector<double> shape(3,6);			//shape of ellipsoids
 vector<double> orient(4,0);			//orientation of ellipsoids
-const double sa0 = 1.5;
+const double sa0 = 5.0;
 const double sa = sa0 + 1;				//shapex
 const double qw = 1;				//quaternion w
-const double Phi_ellipsoids = 0.1;												//Area density of the ellipsoids
+const double Phi_ellipsoids = 0.6;												//Area density of the ellipsoids
 const int Num_ellipsoids = number(sa0, shape0[1], L_box, Phi_ellipsoids);		//Number of the ellipsoids
-std::string filename = "0.1Phi_1.5S.data";
+std::string filename = "ellipse_0.6_5.0R.data";
 
 const int Num_atoms = Num_ellipsoids;			//Number of atoms
 const int Num_bonds = 0;						//Number of bonds
@@ -162,7 +162,7 @@ double Normaldev::dev()
 //Number of ellipsoidstacle with radius of r, with dencity of phi, in box of l
 inline int number(double a, double b, double l, double phi)
 {
-	double s = PI * a * b / 4.0;
+	double s = PI * a * b;
 	double S = l * l;
 	double num = phi * S/s;
 	return round(num);
