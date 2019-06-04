@@ -133,6 +133,7 @@ write_restart	0.4_2.5.restart
 timestep	0.01
 unfix		11
 unfix		12
+unfix       2
 #unfix		14
 set			type 3 shape 2 1 1
 
@@ -156,7 +157,7 @@ neigh_modify	every 1 delay 0 check yes exclude none
 
 fix      	13 chain langevin 10.0 10.0 ${Gamma} ${Seed} zero yes
 #fix			14 chain nve/limit 0.1
-
+fix	     	13  all enforce2d 
 #run
 reset_timestep		0
 run	     ${Tequ0}

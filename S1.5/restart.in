@@ -133,6 +133,7 @@ write_restart	0.1Phi_1.5S.restart
 timestep	0.01
 unfix		11
 unfix		12
+unfix       2
 #unfix		14
 set			type 3 shape 1.5 1 1
 
@@ -155,6 +156,7 @@ minimize      1.0e-4 1.0e-6 1000 10000
 neigh_modify	every 1 delay 0 check yes exclude none
 
 fix      	13 chain langevin 10.0 10.0 ${Gamma} ${Seed} zero yes
+fix	     	2  all enforce2d
 #fix			14 chain nve/limit 0.1
 
 #run

@@ -126,6 +126,7 @@ unfix       soft1
 unfix       soft2 
 unfix       11
 unfix       12
+unfix       13
 reset_timestep	0
 
 # pair potential
@@ -148,6 +149,7 @@ timestep        ${dt}
 
 fix			11 chain nve
 fix      	12 chain langevin  ${T0} ${Te} ${Gamma} ${Seed} zero yes 
+fix	     	13  all enforce2d
 
 run		${Tequ0}
 undump      1

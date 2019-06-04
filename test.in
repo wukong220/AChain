@@ -43,17 +43,18 @@ variable	Seed equal 765234746
 # run time
 variable	dt equal 0.001		# Timestep
 
-variable	Nf_equ equal 10		# number of frames
-variable	Tpf_equ equal 5000
+variable	Nf_equ equal 20		# number of frames
+variable	Tpf_equ equal 10000
 variable	Tequ equal ${Nf_equ}*${Tpf_equ}
 
-variable	Nf_equ0 equal 20		# number of frames
+variable	Nf_equ0 equal 50		# number of frames
 variable	Tpf_equ0 equal 10000				#Timesteps per frame-> initializatio
 variable	Tequ0 equal ${Nf_equ0}*${Tpf_equ0}
 
-variable	Nf_run equal 200000
-variable	Tpf_run equal 5000
+variable	Nf_run equal 1000
+variable    Tpf_run equal 100000
 variable	Ttotal equal ${Nf_run}*${Tpf_run}	# Total run steps
+variable	Tpf_run_u equal 5000
 ##################################################################
 
 read_restart    001.init.restart
@@ -62,7 +63,7 @@ reset_timestep	0
 group			chain type 1 2
 group			obs type 3
 
-set			type 3 shape 2.5 1 1
+set			type 3 shape 1 1 1
 
 reset_timestep    0
 comm_modify vel yes
@@ -91,7 +92,7 @@ angle_coeff     1 ${Kb} ${Theta0} 0.0
 
 
 # minimize energy
-#minimize      1.0e-4 1.0e-6 1000 10000
+minimize      1.0e-4 1.0e-6 1000 10000
 
 # neighbor
 neighbor	${Bin} bin
@@ -125,11 +126,11 @@ unfix       soft1
 unfix       soft2 
 unfix       11
 unfix       12
-undump      1
+unfix       13
 reset_timestep	0
 
 # pair potential
-pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 3.0 1.0 3.5
+pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 3.0 1.0 2.0
 pair_coeff   1 1 lj/cut 3.0 1.0
 pair_coeff   1 2 lj/cut 3.0 1.0
 pair_coeff   2 2 lj/cut 3.0 1.0
@@ -148,22 +149,26 @@ timestep        ${dt}
 
 fix			11 chain nve
 fix      	12 chain langevin  ${T0} ${Te} ${Gamma} ${Seed} zero yes 
+fix	     	13  all enforce2d
 
 run		${Tequ0}
+undump      1
 reset_timestep 0
 
 # compute and output
 # mean-squared-displace of chain
 compute         msd chain msd
+compute         com chain msd com yes
 compute			ave chain msd average yes 
 fix             vm chain vector 1000 c_msd[4]
+fix             vc chain vector 1000 c_com[4]
 fix             va chain vector 1000 c_ave[4]
-variable	    	t equal step*${dt}
+variable	   	t equal step*${dt}
 
 #thermo_style	custom step temp c_msd[4] 
 #variable		D equal c_msd[4]
 #fix 			4 Chain print 1000 "$t $D" file print0.07_900_msd.txt screen no 
-fix				msd chain ave/time 1 1 1000 v_t c_msd[4] c_ave[4] file 001_msd.txt 
+fix				msd chain ave/time 1 1 1000 v_t c_msd[4] c_com[4] c_ave[4] file 001_msd.txt 
 
 # orientation and shape of obstacles
 #compute	     rot all temp/asphere
@@ -173,7 +178,7 @@ dump		1 all custom ${Tpf_run} 001.lammpstrj id type x y z vx vy vz&
 			c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3] 
 dump_modify     1 sort id
 
-dump		2 all custom ${Tpf_run} 001u.lammpstrj id type xu yu zu vx vy vz&
+dump		2 all custom ${Tpf_run_u} 001u.lammpstrj id type xu yu zu vx vy vz&
 			c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3] 
 dump_modify     2 sort id
 
