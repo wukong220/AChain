@@ -12,7 +12,7 @@ newton          off
 ##################################################################
 # LJ potential of beads of chain 
 variable	Rc1_s equal 4.1			# Soft potential cutoff distance/Interval
-variable	Rc2_s equal 2.0			# Soft potential cutoff distance/Interval
+variable	Rc2_s equal 2.5			# Soft potential cutoff distance/Interval
 variable	Pre_soft1 equal ramp(0.0,350.0)	# Soft prefactor
 variable	Pre_soft2 equal ramp(0.0,100000.0)	# Soft prefactor
 variable	Rc_lj equal 1.12246		# LJ potential cutoff of beeds
@@ -55,7 +55,7 @@ variable	Trestart equal 100000		#restart time
 variable	Ttotal equal ${Nf_run}*${Trestart}	# Total run steps
 ##################################################################
 
-read_restart	0.1Phi_1.0S.restart
+read_restart	0.1Phi_3.0S.restart
 
 # groups
 group			chain type 1 2 
@@ -66,7 +66,7 @@ comm_modify vel yes
 
 # potential data
 ##################################################################
-pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 3.0 1.0 2.5
+pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 3.0 1.0 4.5
 pair_coeff   1 1 lj/cut 3.0 1.0
 pair_coeff   1 2 lj/cut 3.0 1.0
 pair_coeff   2 2 lj/cut 3.0 1.0
@@ -127,14 +127,14 @@ dump_modify     1 sort id
 reset_timestep		0
 restart         ${Trestart} init.*.restart 
 run	          ${Ttotal}
-write_restart	0.1Phi_1.0S.restart
+write_restart	0.1Phi_3.0S.restart
 
 # chain initialization
 timestep	0.01
 unfix		11
 unfix		12
-#unfix		14
-set			type 3 shape 1 1 1
+unfix		2
+set			type 3 shape 3 1 1
 
 # requilibration run2 on dense system 
 # pair potential
@@ -156,7 +156,7 @@ neigh_modify	every 1 delay 0 check yes exclude none
 
 fix      	13 chain langevin 10.0 10.0 ${Gamma} ${Seed} zero yes
 #fix			14 chain nve/limit 0.1
-fix	     	2  all enforce2d
+fix         2 all enforce2d
 
 #run
 reset_timestep		0

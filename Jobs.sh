@@ -23,7 +23,7 @@ do
 
      #nohup mpirun -np 1 lmp_wk -l $i.log -i $i.act.in > $i.data &                                        #nohup
      #echo "nohup mpirun -np 1 lmp_wk -l $i.log -i $i.act.in > $i.data &"
-done 
+#done 
 
 for t in 011 012 013 014 015 016 017 018 019 020 
 do
