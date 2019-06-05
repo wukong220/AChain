@@ -62,7 +62,7 @@ variable	Ttotal equal ${Nf_run}*${Tpf_run}	# Total run steps
 ##################################################################
 
 read_data       chain.data
-read_data		0.4Phi_1.0S.data add append offset 2 0 0 0 0
+read_data		0.1Phi_1.0S.data add append offset 2 0 0 0 0
 
 # groups
 group			chain type 1 2 
@@ -126,7 +126,7 @@ compute	     orient all property/atom quati quatj quatk quatw
 compute		shape all property/atom shapex shapey shapez
 #compute	     rot all temp/asphere
 #compute_modify rot extra/dof ${dof}
-dump		1 all custom ${Tpf_equ} 0.4Phi_1.0S.lammpstrj id type x y z &
+dump		1 all custom ${Tpf_equ} 0.1Phi_1.0S.lammpstrj id type x y z &
 			c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3] 
 dump_modify     1 sort id
 
@@ -135,4 +135,4 @@ reset_timestep	0
 timestep        ${dt}
 thermo		1000
 run	     ${Tequ}
-write_restart   0.4Phi_1.0S.restart
+write_restart   0.1Phi_1.0S.restart
