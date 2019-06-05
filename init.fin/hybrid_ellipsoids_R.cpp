@@ -20,19 +20,19 @@ const int Type_ellipsoids = 1;				//atom type of ellipsoidstacles
 const int MID_chain = 1;					//Mollecule ID of chains
 const int MID_ellipsoids = 2 ;				//Mollecule ID of ellipsoids
 
-const double L_box = 70.0;					//Lengh of the box
-const double n_box = 3;						//For dense system
+const double L_box = 100.0;					//Lengh of the box
+const double n_box = 2;						//For dense system
 
 //ellipsoidstacle setup
 const int ellipsoidsflag = 1;			//ellipsoidal finite size 
 const int density = 1.0;			//Ellipsoidal density
-vector<double> shape(3,1);			//shape of ellipsoids
+vector<double> shape(3,10);			//shape of ellipsoids
 vector<double> orient(4,0);			//orientation of ellipsoids
-const double sa = 2.5;				//shapex
+const double sa = 10.0;				//shapex
 const double qw = 1;				//quaternion w
-const double Phi_ellipsoids = 0.2;												//Area density of the ellipsoids
+const double Phi_ellipsoids = 0.6;												//Area density of the ellipsoids
 const int Num_ellipsoids = number(sa, shape[1], L_box, Phi_ellipsoids);		//Number of the ellipsoids
-std::string filename = "0.2Phi_2.5S.data";
+std::string filename = "0.6Phi_5.0.R.data";
 
 const int Num_atoms = Num_ellipsoids;			//Number of atoms
 const int Num_bonds = 0;						//Number of bonds
