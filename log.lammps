@@ -1,8 +1,0 @@
-LAMMPS (22 Aug 2018)
-#!/bin/sh
-#phi=0.4, kb, Fa
-# Setup
-echo		screen
-  restoring atom style hybrid from restart
-ERROR: Invalid flag in header section of restart file (../read_restart.cpp:930)
-Last command: read_restart    001.init.restart
