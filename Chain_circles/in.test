@@ -1,0 +1,31 @@
+# 3d Lennard-Jones melt
+
+
+units		         lj
+dimension        2
+atom_style	     angle
+bondary          p p p
+
+bond_style       harmonic
+angle_style      actharmonic
+
+read_data        data.test
+
+pair_style	     lj/cut 1.12246
+pair_coeff	     * * 1.0 1.0
+bond_coeff       *  100.0  1.0
+angle_coeff      *   0.0  180  10
+
+neighbor	        0.3 bin
+neigh_modify	    every 1 delay 0 check yes
+
+velocity	       all create 3.0 87287
+
+fix		            1 all nve
+fix               2 all langevin
+fix               3 all enforce2d
+
+dump		          1 all atom 50 dump.melt
+
+thermo		        50
+run		            250

@@ -1,0 +1,130 @@
+#!/bin/sh
+
+# Setup
+echo		screen
+units           lj
+dimension       2
+boundary        p p p
+atom_style      angle
+newton          off
+
+
+# settings
+##################################################################
+# LJ potential of beads of chain 
+variable	Rc_s equal 11.25		# Soft potential cutoff distance/Interval
+variable	Pre_soft equal ramp(0,50.0)	# Soft prefactor
+variable	Rc_lj equal 1.12246		# LJ potential cutoff of beeds
+# variable	Rc_lj equal 1.0			# LJ potential cutoff of beeds
+variable	Epsilon equal 4*500.0		# 4 * LJ potential depth * 4
+variable	Sigma equal 2*0.5		# 2 * LJ potential Radius of beads * 2
+
+# LJ potential of obstacle with beads
+variable	Ro equal 2*5.0			# 2 * LJ potential Radius of obstacles/Size * 2 
+variable	Rc_o equal v_Ro*v_Rc_lj		# LJ potential cutoff of obstacles
+variable	R12 equal (v_Sigma+v_Ro)/2.0	# LJ potential between beads and obstacles  
+variable	Rc_12 equal v_R12*v_Rc_lj	# LJ potential cutoff of beads and obstacles
+
+# Spring and bending potential of chain
+variable	Ks equal 2*2500.0	# 2 * Spring efficiency * 2 
+variable	R0 equal 1.05		# Spring equilibrium distance
+variable	Kb equal 2*10.0		# 2 * Bending efficiency * 2
+variable	Theta0 equal 180.0	# Bending equilibrium degree
+variable	Fa equal 0.0		# Active Force
+
+# Langevin equation
+variable	Bin equal 1.3		# Neighbor bin
+variable	T0 equal 1.0		# Original temperature 
+variable	Te equal 1.0		# End temperature
+variable	Gamma equal 0.02	# Friction efficiency 
+variable	Seed equal 765234746	# Seed of white noise
+
+# run time
+variable	dt equal 0.001		# Timestep
+variable	Ttotal equal 500000	# Total run steps
+##################################################################
+
+
+#read_data	equ02.data
+read_restart	restart_equ02.data
+
+# minimize energy
+ minimize      1.0e-6 1.0e-8 1000 10000
+
+reset_timestep    0
+comm_modify vel yes
+
+# groups
+group			Chain type 1
+group			Obs type 2
+# group               Na  type 1		#act
+# group               Np  type 2		#passive
+# group               Nw  type 3	    #wall
+# group               Nc  type 4	    #chain
+# group               Nf  type 3 4
+# group               Ne  type 1 2
+# group               Nd  type 1 2 3 4
+
+
+# potential data
+##################################################################
+# pair potencial 
+pair_style      lj/cut ${Rc_lj}
+# pair_coeff	* * 1.0 1.0
+pair_coeff      1 1 ${Epsilon} ${Sigma} ${Rc_lj}
+pair_coeff	2 2 ${Epsilon} ${Ro} ${Rc_o}
+pair_coeff	1 2 ${Epsilon} ${R12} ${Rc_12}
+pair_modify    shift yes
+
+# Bond potencial
+bond_style      harmonic
+bond_coeff      1 ${Ks} ${R0}
+# special_bonds   lj/coul 1.0 1.0 1.0
+
+# Active angle potential
+angle_style     actharmonic
+angle_coeff     1 ${Kb} ${Theta0} ${Fa}
+##################################################################
+
+
+
+# minimize energy
+# minimize      1.0e-6 1.0e-8 1000 10000
+
+# neighbor
+neighbor	${Bin} bin
+neigh_modify	every 1 delay 0 check yes
+
+
+
+# run dynamical equation
+##################################################################
+timestep	${dt}
+thermo		5000
+
+# fix the Obstacles
+#fix		0 Obs freeze
+#fix           1 Obs rigid single force 1 off off off torque 1 off off off
+# fix		2 Obs move variable NULL NULL NULL NULL NULL NULL
+#set		group Obs vx 0.0 vy 0.0 vz 0.0
+#fix		10 Obs nve/noforce
+
+# fix the beads of Chain
+fix             20 Chain nve
+fix             21 Chain langevin ${T0} ${Te} ${Gamma} ${Seed} zero yes
+fix		22 all enforce2d
+
+# output and run 
+dump		1 all custom 10000 chain_init03.lammpstrj id type x y z vx vy vz
+dump_modify     1 sort id
+
+# dump            2 all custom 1000 cu_v_init.lammpstrj id type xu yu zu vx vy vz
+# dump_modify     2 sort id
+
+# dump            3 all custom 1000 force_init.lammpstrj id type xu yu zu fx fy fz
+# dump_modify     3 sort id
+
+restart         1000 restart_c1.data restart_c2.data
+run             ${Ttotal}
+write_restart	restart_equ03.data
+##################################################################
