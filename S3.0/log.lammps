@@ -1,0 +1,19 @@
+LAMMPS (12 Dec 2018)
+read_restart 0.1Phi_3.0S.restart
+
+WARNING: Restart file used different # of processors (../read_restart.cpp:725)
+  restoring atom style hybrid from restart
+  orthogonal box = (0 0 -0.5) to (70 70 0.5)
+  1 by 1 by 1 MPI processor grid
+  restoring pair style hybrid/overlay from restart
+  restoring bond style harmonic from restart
+  restoring angle style actharmonic from restart
+  237 atoms
+  29 bonds
+  28 angles
+  2 = max # of 1-2 neighbors
+  2 = max # of 1-3 neighbors
+  4 = max # of 1-4 neighbors
+  6 = max # of special neighbors
+write_data test.data noinit
+
