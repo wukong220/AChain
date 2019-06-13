@@ -12,7 +12,7 @@ newton          off
 ##################################################################
 # LJ potential of beads of chain 
 variable	Rc1_s equal 4.1			# Soft potential cutoff distance/Interval
-variable	Rc2_s equal 2.5			# Soft potential cutoff distance/Interval
+variable	Rc2_s equal 2.0			# Soft potential cutoff distance/Interval
 variable	Pre_soft1 equal ramp(0.0,350.0)	# Soft prefactor
 variable	Pre_soft2 equal ramp(0.0,100000.0)	# Soft prefactor
 variable	Rc_lj equal 1.12246		# LJ potential cutoff of beeds
@@ -78,7 +78,8 @@ pair_coeff   1 3 soft 0.0
 pair_coeff   2 3 soft 0.0
 pair_coeff   3 3 soft 0.0
 fix 		soft1 all adapt 1 pair soft a 1 3 v_Pre_soft1
-fix 		soft2 all adapt 1 pair soft a 3 3 v_Pre_soft2
+fix 		soft2 all adapt 1 pair soft a 2 3 v_Pre_soft1
+fix 		soft3 all adapt 1 pair soft a 3 3 v_Pre_soft2
 
 # Bond potential
 bond_style      harmonic
@@ -124,6 +125,7 @@ thermo		1000
 run		${Tequ0}
 unfix       soft1 
 unfix       soft2 
+unfix       soft3 
 unfix       11
 unfix       12
 unfix       13
