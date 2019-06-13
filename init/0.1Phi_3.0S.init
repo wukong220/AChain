@@ -72,7 +72,7 @@ variable     dof equal count(chain)+2
 set 	     group chain mass 1.0
 set 	     group obs mass 1.0
 set			group chain shape 1 1 1
-set			group obs shape 4.1 2.1 2.1
+set			group obs shape 4.2 2.2 2.2
 set 		group obs quat/random 18238
 comm_modify vel yes
 
@@ -81,7 +81,7 @@ velocity		chain create 0.4 87287 loop geom
 
 # potential data
 ##################################################################
-pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 3.0 1.0 5.0
+pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 1.0 1.0 5.0
 pair_coeff   1 1 lj/cut 3.0 1.0
 pair_coeff   1 2 lj/cut 3.0 1.0
 pair_coeff   2 2 lj/cut 3.0 1.0
