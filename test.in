@@ -12,7 +12,7 @@ newton          off
 ##################################################################
 # LJ potential of beads of chain 
 variable	Rc1_s equal 4.1			# Soft potential cutoff distance/Interval
-variable	Rc2_s equal 2.0			# Soft potential cutoff distance/Interval
+variable	Rc2_s equal 2.5			# Soft potential cutoff distance/Interval
 variable	Pre_soft1 equal ramp(0.0,350.0)	# Soft prefactor
 variable	Pre_soft2 equal ramp(0.0,100000.0)	# Soft prefactor
 variable	Rc_lj equal 1.12246		# LJ potential cutoff of beeds
