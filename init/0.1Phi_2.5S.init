@@ -72,7 +72,7 @@ variable     dof equal count(chain)+2
 set 	     group chain mass 1.0
 set 	     group obs mass 1.0
 set			group chain shape 1 1 1
-set			group obs shape 3.6 2.1 2.1
+set			group obs shape 3.7 2.1 2.1
 set 		group obs quat/random 18238
 comm_modify vel yes
 
