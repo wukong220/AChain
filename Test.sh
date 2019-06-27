@@ -8,4 +8,4 @@
 #    cd ..
 #done 
 
-mpirun -np 6 lmp_wk -i restart.in -l restart.log
+mpirun -np 6 lmp_wk -i test.in -l test.log

@@ -12,7 +12,7 @@ newton          off
 ##################################################################
 # LJ potential of beads of chain 
 variable	Rc1_s equal 4.1			# Soft potential cutoff distance/Interval
-variable	Rc2_s equal 2.5			# Soft potential cutoff distance/Interval
+variable	Rc2_s equal 1.5			# Soft potential cutoff distance/Interval
 variable	Pre_soft1 equal ramp(0.0,350.0)	# Soft prefactor
 variable	Pre_soft2 equal ramp(0.0,100000.0)	# Soft prefactor
 variable	Rc_lj equal 1.12246		# LJ potential cutoff of beeds
@@ -63,7 +63,7 @@ reset_timestep	0
 group			chain type 1 2
 group			obs type 3
 
-set			type 3 shape 3 1 1
+set			type 3 shape 2.0 1 1
 
 reset_timestep    0
 comm_modify vel yes
@@ -71,9 +71,9 @@ comm_modify vel yes
 # potential data
 ##################################################################
 pair_style   hybrid/overlay lj/cut ${Rc_lj} soft ${Rc2_s}
-pair_coeff   1 1 lj/cut 4.0 1.0
-pair_coeff   1 2 lj/cut 4.0 1.0
-pair_coeff   2 2 lj/cut 4.0 1.0
+pair_coeff   1 1 lj/cut 1.0 1.0
+pair_coeff   1 2 lj/cut 1.0 1.0
+pair_coeff   2 2 lj/cut 1.0 1.0
 pair_coeff   1 3 soft 0.0
 pair_coeff   2 3 soft 0.0
 pair_coeff   3 3 soft 0.0
@@ -132,7 +132,7 @@ unfix       13
 reset_timestep	0
 
 # pair potential
-pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 3.0 1.0 3.0
+pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 3.0 1.0 2.5
 pair_coeff   1 1 lj/cut 1.0 1.0
 pair_coeff   1 2 lj/cut 1.0 1.0
 pair_coeff   2 2 lj/cut 1.0 1.0
@@ -193,4 +193,3 @@ restart         1000 001.a.restart  001.b.restart
 run		${Ttotal}
 write_restart	001.end.restart 
 ##################################################################
-
