@@ -26,13 +26,13 @@ const double n_box = 2;						//For dense system
 //ellipsoidstacle setup
 const int ellipsoidsflag = 1;			//ellipsoidal finite size 
 const int density = 1.0;			//Ellipsoidal density
-const int R = 2.0;
+const int R = 1.0;
+const double s = 2.0 * R;				//shapex
 vector<double> shape(3, R);			//shape of ellipsoids
 vector<double> orient(4, 0);			//orientation of ellipsoids
-const double sa = 1.0 * R;				//shapex
 const double qw = 1;				//quaternion w
 const double Phi_ellipsoids = 0.1;												//Area density of the ellipsoids
-const int Num_ellipsoids = number(sa, shape[1], L_box, Phi_ellipsoids);		//Number of the ellipsoids
+const int Num_ellipsoids = number(s, shape[1], L_box, Phi_ellipsoids);		//Number of the ellipsoids
 std::string filename = "0.1Phi_1.0S_2.0R.data";
 
 const int Num_atoms = Num_ellipsoids;			//Number of atoms
@@ -80,7 +80,7 @@ int main()
 	double**  par = new double* [Num_ellipsoids];	
 	for (int i = 0;i < Num_ellipsoids;i++)
 			par[i] = new double[2];
-	shape[0] = sa;
+	shape[0] = s;
 	orient[0] = qw;
 	
 	

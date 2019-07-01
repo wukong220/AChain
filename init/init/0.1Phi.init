@@ -12,7 +12,7 @@ newton          off
 ##################################################################
 # LJ potential of beads of chain 
 variable	Rc1_s equal 4.1			# Soft potential cutoff distance/Interval
-variable	Rc2_s equal 2.5			# Soft potential cutoff distance/Interval
+variable	Rc2_s equal 3.5			# Soft potential cutoff distance/Interval
 variable	Pre_soft1 equal ramp(0.0,350.0)	# Soft prefactor
 variable	Pre_soft2 equal ramp(0.0,100000.0)	# Soft prefactor
 variable	Rc_lj equal 1.12246		# LJ potential cutoff of beeds
@@ -51,8 +51,8 @@ variable	Tpf_equ equal 1000				#Timesteps per frame
 variable	Tequ equal ${Nf_equ}*${Tpf_equ}
 
 # initialization obstacles
-variable	Nf_equ0 equal 20		# number of frames
-variable	Tpf_equ0 equal 100000				#Timesteps per frame-> initialization
+variable	Nf_equ0 equal 30		# number of frames
+variable	Tpf_equ0 equal 10000				#Timesteps per frame-> initialization
 variable	Tequ0 equal ${Nf_equ0}*${Tpf_equ0}
 
 # for restart
@@ -61,8 +61,8 @@ variable	Tpf_run equal 100000
 variable	Ttotal equal ${Nf_run}*${Tpf_run}	# Total run steps
 ##################################################################
 
-read_data       chain.data
-read_data		0.1Phi_1.0S.data add append offset 2 0 0 0 0
+read_data       30N_chain.data
+read_data		0.1Phi_1.0S_2.0R.data add append offset 2 0 0 0 0
 
 # groups
 group			chain type 1 2 
@@ -72,7 +72,7 @@ variable     dof equal count(chain)+2
 set 	     group chain mass 1.0
 set 	     group obs mass 1.0
 set			group chain shape 1 1 1
-set			group obs shape 2.1 2.1 2.1
+set			group obs shape 1.2 1.0 1.0
 set 		group obs quat/random 18238
 comm_modify vel yes
 
@@ -81,7 +81,7 @@ velocity		chain create 0.4 87287 loop geom
 
 # potential data
 ##################################################################
-pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 3.0 1.0 3.0
+pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 3.0 1.0 4.0
 pair_coeff   1 1 lj/cut 3.0 1.0
 pair_coeff   1 2 lj/cut 3.0 1.0
 pair_coeff   2 2 lj/cut 3.0 1.0
@@ -116,7 +116,7 @@ neigh_modify	every 1 delay 0 check yes exclude group chain obs
 #fix	    	 1 obs npt/asphere temp 1.0 1.0 0.1 iso 0.0 1.0 0.1 tchain 1 pchain 0 mtk no
 #compute_modify 1_temp extra/dof ${dof}
 
-fix		 	10 all deform 1 x final 0.0 70.0 y final 0.0 70.0  units box remap x
+fix		 	10 all deform 1 x final 0.0 100.0 y final 0.0 100.0  units box remap x
 fix	     	11 obs nve/asphere 
 fix			12 obs nve/limit 0.05
 fix			14 chain nve/limit 0.08
@@ -126,13 +126,16 @@ compute	     orient all property/atom quati quatj quatk quatw
 compute		shape all property/atom shapex shapey shapez
 #compute	     rot all temp/asphere
 #compute_modify rot extra/dof ${dof}
-dump		1 all custom ${Tpf_equ} 0.1Phi_1.0S.lammpstrj id type x y z &
+dump		1 all custom ${Tpf_equ} 0.1Phi_1.0S_2.0R.lammpstrj id type x y z &
 			c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3] 
 dump_modify     1 sort id
+dump		2 all custom ${Tpf_equ} 0.1Phi_1.0S_2.0Ru.lammpstrj id type xu yu zu &
+			c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3] 
+dump_modify     2 sort id
 
 # equilibrate to shrink box around dilute system
 reset_timestep	0
 timestep        ${dt}
 thermo		1000
 run	     ${Tequ}
-write_restart   0.1Phi_1.0S.restart
+write_restart   0.1Phi_1.0S_2.0R.restart
