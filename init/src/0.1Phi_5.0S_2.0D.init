@@ -1,5 +1,4 @@
 #!/bin/sh
-
 # Setup
 echo		screen
 units           lj
@@ -11,19 +10,20 @@ newton          off
 # settings
 ##################################################################
 # LJ potential of beads of chain 
-variable	Rc1_s equal 4.1			# Soft potential cutoff distance/Interval
-variable	Rc2_s equal 3.5			# Soft potential cutoff distance/Interval
-variable	Pre_soft1 equal ramp(0.0,350.0)	# Soft prefactor
+variable	Rc1_s equal 4.1		            	# Soft potential cutoff distance/Interval
+variable	Rc2_s equal 3.5		               	# Soft potential cutoff distance/Interval
+variable	Pre_soft1 equal ramp(0.0,350.0) 	# Soft prefactor
 variable	Pre_soft2 equal ramp(0.0,100000.0)	# Soft prefactor
-variable	Rc_lj equal 1.12246		# LJ potential cutoff of beeds
-variable	Epsilon equal 3*1.0		# 4 * LJ potential depth * 4
-variable	Sigma equal 2*0.5		# 2 * LJ potential Radius of beads * 2
+variable	Epsilon equal 3*1.0	            	# 3 * LJ potential depth * 3
+variable	Sigma equal 2*0.5	            	# 2 * LJ potential Radius of beads * 2
+variable	Rc_lj equal 1.12246*v_Sigma	    	# LJ potential cutoff of beeds
 # LJ potential of obstacle with beads
-variable    Shape equal 5.0             # 2D shape
-variable	Ro equal 2*2.0		    	# 2 * LJ potential Radius of obstacles/Size * 2 
-variable	Rc_o equal (v_Ro*v_Shape)*v_Rc_lj		# LJ potential cutoff of obstacles
-variable	R12 equal (v_Sigma+v_Ro)/2.0	# LJ potential between beads and obstacles  
-variable	Rc_12 equal (v_Ro*v_Shape+v_Sigma)*v_Rc_lj/2.0	# LJ potential cutoff of beads and obstacles
+variable    Shape equal 5.0                     # 2D shape
+variable	Ro equal 2*1.0+1.2		            # 2 * LJ potential Radius of obstacles/Size * 2
+variable    Ra equal v_Ro*v_Shape+1.2           # depletion distance of minor axis: 0.6*2
+variable	Rc_o equal v_Ra*v_Rc_lj	        	# LJ potential cutoff of obstacles
+variable	R12 equal (v_Ro+v_Sigma)/2.0    	# LJ potential between beads and obstacles  
+variable	Rc_12 equal (v_Ra+v_Sigma)*v_Rc_lj/2.0	# LJ potential cutoff of beads and obstacles
 
 # Spring and bending potential of chain
 variable	Ks equal 2*350.0	# 2 * Spring efficiency * 2 
@@ -81,7 +81,7 @@ velocity		chain create 0.4 87287 loop geom
 
 # potential data
 ##################################################################
-pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 3.0 1.0 ${Rc_12}
+pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 1.0 1.0 ${Rc_12}
 pair_coeff   1 1 lj/cut ${Epsilon} ${Sigma}
 pair_coeff   1 2 lj/cut ${Epsilon} ${Sigma}
 pair_coeff   2 2 lj/cut ${Epsilon} ${Sigma}

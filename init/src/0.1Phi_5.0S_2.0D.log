@@ -1,6 +1,8 @@
+---------------------------------------------------------------
+0.1Phi_5.0S_2.0D
+---------------------------------------------------------------
 LAMMPS (12 Dec 2018)
 #!/bin/sh
-
 # Setup
 echo		screen
   orthogonal box = (0 0 -0.5) to (200 200 0.5)
@@ -39,9 +41,9 @@ WARNING: Using 'neigh_modify every 1 delay 0 check yes' setting during minimizat
 Neighbor list info ...
   update every 1 steps, delay 0 steps, check yes
   max neighbors/atom: 2000, page size: 100000
-  master list distance cutoff = 22.7492
-  ghost atom cutoff = 22.7492
-  binsize = 11.3746, bins = 18 18 1
+  master list distance cutoff = 19.6063
+  ghost atom cutoff = 19.6063
+  binsize = 9.80316, bins = 21 21 1
   3 neighbor lists, perpetual/occasional/extra = 3 0 0
   (1) pair lj/cut, perpetual, skip from (3)
       attributes: half, newton off
@@ -60,35 +62,35 @@ Neighbor list info ...
       bin: standard
 Per MPI rank memory allocation (min/avg/max) = 9.879 | 9.879 | 9.879 Mbytes
 Step Temp E_pair E_mol TotEng Press 
-       0    1.7505376   -0.3152058    5.1864292    6.6031383  0.026694016 
-      51    1.7505376  -0.32338338  0.010175658    1.4187072 0.00072921875 
-Loop time of 0.010581 on 1 procs for 51 steps with 94 atoms
+       0    1.7505376    728.65635    10.618799    741.00707    45.609875 
+     342    1.7505376 -0.080057688 0.0091830373    1.6610402 0.0039025441 
+Loop time of 0.016364 on 1 procs for 342 steps with 94 atoms
 
-99.5% CPU use with 1 MPI tasks x no OpenMP threads
+96.6% CPU use with 1 MPI tasks x no OpenMP threads
 
 Minimization stats:
   Stopping criterion = linesearch alpha is zero
   Energy initial, next-to-last, final = 
-         4.87122339883    -0.313207721908    -0.313207721908
-  Force two-norm initial, final = 1064.66 14.1831
-  Force max component initial, final = 374.091 5.02431
-  Final line search alpha, max atom move = 3.48803e-09 1.7525e-08
-  Iterations, force evaluations = 51 138
+         739.275150723   -0.0708746512019   -0.0708746512019
+  Force two-norm initial, final = 2.63699e+06 2.09382
+  Force max component initial, final = 1.34661e+06 0.638982
+  Final line search alpha, max atom move = 1.5059e-07 9.62241e-08
+  Iterations, force evaluations = 342 762
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 0.009699   | 0.009699   | 0.009699   |   0.0 | 91.66
-Bond    | 0.000334   | 0.000334   | 0.000334   |   0.0 |  3.16
-Neigh   | 0.000165   | 0.000165   | 0.000165   |   0.0 |  1.56
-Comm    | 0.000149   | 0.000149   | 0.000149   |   0.0 |  1.41
+Pair    | 0.010178   | 0.010178   | 0.010178   |   0.0 | 62.20
+Bond    | 0.002817   | 0.002817   | 0.002817   |   0.0 | 17.21
+Neigh   | 0.000822   | 0.000822   | 0.000822   |   0.0 |  5.02
+Comm    | 0.000645   | 0.000645   | 0.000645   |   0.0 |  3.94
 Output  | 0          | 0          | 0          |   0.0 |  0.00
 Modify  | 0          | 0          | 0          |   0.0 |  0.00
-Other   |            | 0.000234   |            |       |  2.21
+Other   |            | 0.001902   |            |       | 11.62
 
 Nlocal:    94 ave 94 max 94 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:    46 ave 46 max 46 min
+Nghost:    18 ave 18 max 18 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 Neighs:    0 ave 0 max 0 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
@@ -96,15 +98,15 @@ Histogram: 1 0 0 0 0 0 0 0 0 0
 Total # of neighbors = 0
 Ave neighs/atom = 0
 Ave special neighs/atom = 1.78723
-Neighbor list builds = 11
+Neighbor list builds = 43
 Dangerous builds = 0
 WARNING: One or more atoms are time integrated more than once (../modify.cpp:283)
 Neighbor list info ...
   update every 1 steps, delay 0 steps, check yes
   max neighbors/atom: 2000, page size: 100000
-  master list distance cutoff = 23.2492
-  ghost atom cutoff = 23.2492
-  binsize = 11.6246, bins = 18 18 1
+  master list distance cutoff = 20.1063
+  ghost atom cutoff = 20.1063
+  binsize = 10.0532, bins = 20 20 1
   3 neighbor lists, perpetual/occasional/extra = 3 0 0
   (1) pair lj/cut, perpetual, skip from (3)
       attributes: half, newton off
@@ -123,36 +125,36 @@ Neighbor list info ...
       bin: standard
 Per MPI rank memory allocation (min/avg/max) = 12.17 | 12.17 | 12.17 Mbytes
 Step Temp E_pair E_mol TotEng Press Volume 
-       0    1.7505376  -0.32271353  0.010175658     1.419377 0.00073611089        40000 
-    1000    9.2756444      -5.4247  0.052721347    3.8049888 -0.042463488        36100 
-    2000    107.41389   -53.138361  0.046503183    53.179335  -0.16863289        32400 
-    3000     200.2806   -83.298609  0.055709243    114.90705   0.93267578        28900 
-    4000    278.42268   -100.14164  0.034143492    175.35324    1.0364669        25600 
-    5000    241.13342   -124.82639  0.043767001    113.78555  -0.20766576        22500 
-    6000     211.7289   -143.29935  0.039702075    66.216821  -0.45342958        19600 
-    7000    273.82685   -235.25255  0.037484484    35.698732   0.58007628        16900 
-    8000    272.34442   -244.04278  0.037893258    25.442256  -0.27373807        14400 
-    9000    263.32969   -319.01694  0.037094941   -58.451538   0.13600854        12100 
-   10000    296.76024    -458.0951  0.032454161   -164.45943    5.4369757        10000 
-Loop time of 1.17233 on 1 procs for 10000 steps with 94 atoms
+       0    1.7505376            0 0.0091830373    1.7410979 0.0039836062        40000 
+    1000    20.000576   -17.034181  0.078615947    2.8322388 -0.080633334        36100 
+    2000     70.08791   -20.381231  0.082162118    49.043225   0.67650915        32400 
+    3000    201.26182   -43.046749  0.055324305    156.12931    1.0713198        28900 
+    4000    293.97246   -102.57279  0.068711756    188.34101   0.54735354        25600 
+    5000    322.36752   -115.77511  0.054752703    203.21772   0.12573546        22500 
+    6000    285.47836   -70.155476  0.046578615    212.33246   0.54028319        19600 
+    7000    230.44088   -98.785446  0.043445053    129.24738   0.10135409        16900 
+    8000    332.99677   -125.06982  0.059708592    204.44414    4.2785128        14400 
+    9000    300.27263   -212.30922  0.041730564    84.810751    9.1681376        12100 
+   10000    276.51158   -211.14001  0.030213951    62.460165    8.4777167        10000 
+Loop time of 1.03039 on 1 procs for 10000 steps with 94 atoms
 
-Performance: 736991.335 tau/day, 8529.992 timesteps/s
-97.9% CPU use with 1 MPI tasks x no OpenMP threads
+Performance: 838515.827 tau/day, 9705.044 timesteps/s
+97.8% CPU use with 1 MPI tasks x no OpenMP threads
 
 MPI task timing breakdown:
 Section |  min time  |  avg time  |  max time  |%varavg| %total
 ---------------------------------------------------------------
-Pair    | 0.91536    | 0.91536    | 0.91536    |   0.0 | 78.08
-Bond    | 0.024414   | 0.024414   | 0.024414   |   0.0 |  2.08
-Neigh   | 0.080034   | 0.080034   | 0.080034   |   0.0 |  6.83
-Comm    | 0.018449   | 0.018449   | 0.018449   |   0.0 |  1.57
-Output  | 0.004899   | 0.004899   | 0.004899   |   0.0 |  0.42
-Modify  | 0.11712    | 0.11712    | 0.11712    |   0.0 |  9.99
-Other   |            | 0.01206    |            |       |  1.03
+Pair    | 0.73423    | 0.73423    | 0.73423    |   0.0 | 71.26
+Bond    | 0.030643   | 0.030643   | 0.030643   |   0.0 |  2.97
+Neigh   | 0.087574   | 0.087574   | 0.087574   |   0.0 |  8.50
+Comm    | 0.019452   | 0.019452   | 0.019452   |   0.0 |  1.89
+Output  | 0.005773   | 0.005773   | 0.005773   |   0.0 |  0.56
+Modify  | 0.13886    | 0.13886    | 0.13886    |   0.0 | 13.48
+Other   |            | 0.01386    |            |       |  1.35
 
 Nlocal:    94 ave 94 max 94 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
-Nghost:    75 ave 75 max 75 min
+Nghost:    59 ave 59 max 59 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
 Neighs:    0 ave 0 max 0 min
 Histogram: 1 0 0 0 0 0 0 0 0 0
@@ -160,15 +162,15 @@ Histogram: 1 0 0 0 0 0 0 0 0 0
 Total # of neighbors = 0
 Ave neighs/atom = 0
 Ave special neighs/atom = 1.78723
-Neighbor list builds = 2164
+Neighbor list builds = 2099
 Dangerous builds = 0
 WARNING: One or more atoms are time integrated more than once (../modify.cpp:283)
 Neighbor list info ...
   update every 1 steps, delay 0 steps, check yes
   max neighbors/atom: 2000, page size: 100000
-  master list distance cutoff = 23.2492
-  ghost atom cutoff = 23.2492
-  binsize = 11.6246, bins = 9 9 1
+  master list distance cutoff = 20.1063
+  ghost atom cutoff = 20.1063
+  binsize = 10.0532, bins = 10 10 1
   3 neighbor lists, perpetual/occasional/extra = 3 0 0
   (1) pair lj/cut, perpetual, skip from (3)
       attributes: half, newton off
@@ -189,3 +191,5 @@ Neighbor list info ...
 Please see the log.cite file for references relevant to this simulation
 
 Total wall time: 0:00:01
+
+
