@@ -18,12 +18,12 @@ variable	Pre_soft2 equal ramp(0.0,100000.0)	# Soft prefactor
 variable	Rc_lj equal 1.12246		# LJ potential cutoff of beeds
 variable	Epsilon equal 3*1.0		# 4 * LJ potential depth * 4
 variable	Sigma equal 2*0.5		# 2 * LJ potential Radius of beads * 2
-
 # LJ potential of obstacle with beads
-variable	Ro equal 2*2.0			# 2 * LJ potential Radius of obstacles/Size * 2 
-variable	Rc_o equal v_Ro*v_Rc_lj		# LJ potential cutoff of obstacles
+variable    Shape equal 2.0             # 2D shape
+variable	Ro equal 2*2.0		    	# 2 * LJ potential Radius of obstacles/Size * 2 
+variable	Rc_o equal (v_Ro*v_Shape)*v_Rc_lj		# LJ potential cutoff of obstacles
 variable	R12 equal (v_Sigma+v_Ro)/2.0	# LJ potential between beads and obstacles  
-variable	Rc_12 equal v_R12*v_Rc_lj	# LJ potential cutoff of beads and obstacles
+variable	Rc_12 equal (v_Ro*v_Shape+v_Sigma)*v_Rc_lj/2.0	# LJ potential cutoff of beads and obstacles
 
 # Spring and bending potential of chain
 variable	Ks equal 2*350.0	# 2 * Spring efficiency * 2 
