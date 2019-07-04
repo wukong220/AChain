@@ -33,7 +33,7 @@ vector<double> orient(4, 0);			//orientation of ellipsoids
 const double qw = 1;				//quaternion w
 const double Phi_ellipsoids = 0.1;												//Area density of the ellipsoids
 const int Num_ellipsoids = number(s, shape[1], L_box, Phi_ellipsoids);		//Number of the ellipsoids
-std::string filename = "0.1Phi_1.0S_2.0D.data";
+std::string filename = "0.1Phi_2.0S_1.0D.data";
 
 const int Num_atoms = Num_ellipsoids;			//Number of atoms
 const int Num_bonds = 0;						//Number of bonds

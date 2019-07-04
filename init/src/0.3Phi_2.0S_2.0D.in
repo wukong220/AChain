@@ -14,11 +14,11 @@ variable	Rc1_s equal 4.1		            	# Soft potential cutoff distance/Interval
 variable	Rc2_s equal 3.5		               	# Soft potential cutoff distance/Interval
 variable	Pre_soft1 equal ramp(0.0,350.0) 	# Soft prefactor
 variable	Pre_soft2 equal ramp(0.0,100000.0)	# Soft prefactor
-variable	Epsilon equal 3*1.0	            	# 3 * LJ potential depth * 3
+variable	Epsilon equal 4*1.0	            	# 4 * LJ potential depth * 4
 variable	Sigma equal 2*0.5	            	# 2 * LJ potential Radius of beads * 2
 variable	Rc_lj equal 1.12246*v_Sigma	    	# LJ potential cutoff of beeds
 # LJ potential of obstacle with beads
-variable    Shape equal 4.0                     # 2D shape
+variable    Shape equal 2.0                     # 2D shape
 variable	Ro equal 2*1.0+1.2		            # 2 * LJ potential Radius of obstacles/Size * 2
 variable    Ra equal v_Ro*v_Shape+1.2           # depletion distance of minor axis: 0.6*2
 variable	Rc_o equal v_Ra*v_Rc_lj	        	# LJ potential cutoff of obstacles
@@ -62,7 +62,7 @@ variable	Ttotal equal ${Nf_run}*${Tpf_run}	# Total run steps
 ##################################################################
 
 read_data       30N_chain.data
-read_data		0.1Phi_4.0S_2.0D.data add append offset 2 0 0 0 0
+read_data		0.3Phi_2.0S_2.0D.data add append offset 2 0 0 0 0
 
 # groups
 group			chain type 1 2 
@@ -72,7 +72,7 @@ variable     dof equal count(chain)+2
 set 	     group chain mass 1.0
 set 	     group obs mass 1.0
 set			group chain shape 1 1 1
-set			group obs shape 9.2 3.2 3.2
+set			group obs shape 5.2  3.2  3.2
 set 		group obs quat/random 18238
 comm_modify vel yes
 
@@ -126,10 +126,10 @@ compute	     orient all property/atom quati quatj quatk quatw
 compute		shape all property/atom shapex shapey shapez
 #compute	     rot all temp/asphere
 #compute_modify rot extra/dof ${dof}
-dump		1 all custom ${Tpf_equ} 0.1Phi_4.0S_2.0D.lammpstrj id type x y z &
+dump		1 all custom ${Tpf_equ} 0.3Phi_2.0S_2.0D.lammpstrj id type x y z &
 			c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3] 
 dump_modify     1 sort id
-dump		2 all custom ${Tpf_equ} 0.1Phi_4.0S_2.0Du.lammpstrj id type xu yu zu &
+dump		2 all custom ${Tpf_equ} 0.3Phi_2.0S_2.0Du.lammpstrj id type xu yu zu &
 			c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3] 
 dump_modify     2 sort id
 
@@ -138,4 +138,4 @@ reset_timestep	0
 timestep        ${dt}
 thermo		1000
 run	     ${Tequ}
-write_restart   0.1Phi_4.0S_2.0D.restart
+write_restart   0.3Phi_2.0S_2.0D.restart

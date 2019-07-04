@@ -1,0 +1,8 @@
+LAMMPS (12 Dec 2018)
+#!/bin/sh
+
+# for t in {0..9}
+variable Ro equal 2*0.5+1.2
+v_Ro
+ERROR: Unknown command: v_Ro (../input.cpp:246)
+Last command: v_Ro

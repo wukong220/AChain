@@ -1,0 +1,195 @@
+---------------------------------------------------------------
+0.2Phi_4.4S_2.0D
+---------------------------------------------------------------
+LAMMPS (12 Dec 2018)
+#!/bin/sh
+# Setup
+echo		screen
+  orthogonal box = (0 0 -0.5) to (200 200 0.5)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  30 atoms
+  scanning bonds ...
+  2 = max bonds/atom
+  scanning angles ...
+  3 = max angles/atom
+  reading bonds ...
+  29 bonds
+  reading angles ...
+  28 angles
+  2 = max # of 1-2 neighbors
+  2 = max # of 1-3 neighbors
+  4 = max # of 1-4 neighbors
+  6 = max # of special neighbors
+  orthogonal box = (0 0 -0.5) to (200 200 0.5)
+  1 by 1 by 1 MPI processor grid
+  reading atoms ...
+  145 atoms
+  145 ellipsoids
+  2 = max # of 1-2 neighbors
+  2 = max # of 1-3 neighbors
+  4 = max # of 1-4 neighbors
+  6 = max # of special neighbors
+30 atoms in group chain
+145 atoms in group obs
+  30 settings made for mass
+  145 settings made for mass
+  30 settings made for shape
+  145 settings made for shape
+  145 settings made for quat/random
+WARNING: Using 'neigh_modify every 1 delay 0 check yes' setting during minimization (../min.cpp:168)
+Neighbor list info ...
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 17.4512
+  ghost atom cutoff = 17.4512
+  binsize = 8.72559, bins = 23 23 1
+  3 neighbor lists, perpetual/occasional/extra = 3 0 0
+  (1) pair lj/cut, perpetual, skip from (3)
+      attributes: half, newton off
+      pair build: skip
+      stencil: none
+      bin: none
+  (2) pair gayberne, perpetual, skip from (3)
+      attributes: half, newton off
+      pair build: skip
+      stencil: none
+      bin: none
+  (3) neighbor class addition, perpetual
+      attributes: half, newton off
+      pair build: half/bin/newtoff
+      stencil: half/bin/2d/newtoff
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 9.881 | 9.881 | 9.881 Mbytes
+Step Temp E_pair E_mol TotEng Press 
+       0    2.0528736 8.6451697e+19     5.126358 8.6451697e+19 2.7999568e+20 
+      73    2.0528736  -0.52641088    9.5815916    11.096324 -0.050891509 
+Loop time of 0.048848 on 1 procs for 73 steps with 175 atoms
+
+98.3% CPU use with 1 MPI tasks x no OpenMP threads
+
+Minimization stats:
+  Stopping criterion = energy tolerance
+  Energy initial, next-to-last, final = 
+     8.64516966631e+19       9.0552045354      9.05518071102
+  Force two-norm initial, final = 1.54027e+25 729.467
+  Force max component initial, final = 9.1343e+24 462.258
+  Final line search alpha, max atom move = 1.88781e-05 0.00872656
+  Iterations, force evaluations = 73 309
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 0.045614   | 0.045614   | 0.045614   |   0.0 | 93.38
+Bond    | 0.000867   | 0.000867   | 0.000867   |   0.0 |  1.77
+Neigh   | 0.000564   | 0.000564   | 0.000564   |   0.0 |  1.15
+Comm    | 0.000594   | 0.000594   | 0.000594   |   0.0 |  1.22
+Output  | 0          | 0          | 0          |   0.0 |  0.00
+Modify  | 0          | 0          | 0          |   0.0 |  0.00
+Other   |            | 0.001209   |            |       |  2.48
+
+Nlocal:    175 ave 175 max 175 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    67 ave 67 max 67 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Ave special neighs/atom = 0.96
+Neighbor list builds = 19
+Dangerous builds = 0
+WARNING: One or more atoms are time integrated more than once (../modify.cpp:283)
+Neighbor list info ...
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 17.9512
+  ghost atom cutoff = 17.9512
+  binsize = 8.97559, bins = 23 23 1
+  3 neighbor lists, perpetual/occasional/extra = 3 0 0
+  (1) pair lj/cut, perpetual, skip from (3)
+      attributes: half, newton off
+      pair build: skip
+      stencil: none
+      bin: none
+  (2) pair gayberne, perpetual, skip from (3)
+      attributes: half, newton off
+      pair build: skip
+      stencil: none
+      bin: none
+  (3) neighbor class addition, perpetual
+      attributes: half, newton off
+      pair build: half/bin/newtoff
+      stencil: half/bin/2d/newtoff
+      bin: standard
+Per MPI rank memory allocation (min/avg/max) = 12.2 | 12.2 | 12.2 Mbytes
+Step Temp E_pair E_mol TotEng Press Volume 
+       0    2.0528736   -2.9489339    9.5815916    8.6738005 -0.093362814        40000 
+    1000    214.50477   -100.49233     4.502897     117.2896    0.3061422        36100 
+    2000    325.80456   -164.05941    4.8239873     164.7074    2.1082576        32400 
+    3000    354.06431   -217.01084    4.0162839    139.04653    2.2942667        28900 
+    4000    356.17788   -259.21906     3.216247    98.139764   0.99505264        25600 
+    5000     362.2429   -317.47983     2.543255    45.236366  -0.38003945        22500 
+    6000    347.70846   -363.53805    3.5832362   -14.233258     3.608595        19600 
+    7000    350.98638   -384.09334    3.0311241   -32.081464    7.4607534        16900 
+    8000    382.32787   -503.51376    2.5064461   -120.86417    12.271668        14400 
+    9000    325.78088   -608.21546    2.9397428   -281.35644    14.744477        12100 
+   10000    356.11908   -794.85759    2.7335088   -438.03998    10.619539        10000 
+Loop time of 2.87173 on 1 procs for 10000 steps with 175 atoms
+
+Performance: 300863.625 tau/day, 3482.218 timesteps/s
+98.5% CPU use with 1 MPI tasks x no OpenMP threads
+
+MPI task timing breakdown:
+Section |  min time  |  avg time  |  max time  |%varavg| %total
+---------------------------------------------------------------
+Pair    | 2.4043     | 2.4043     | 2.4043     |   0.0 | 83.72
+Bond    | 0.02461    | 0.02461    | 0.02461    |   0.0 |  0.86
+Neigh   | 0.16539    | 0.16539    | 0.16539    |   0.0 |  5.76
+Comm    | 0.027785   | 0.027785   | 0.027785   |   0.0 |  0.97
+Output  | 0.007735   | 0.007735   | 0.007735   |   0.0 |  0.27
+Modify  | 0.22492    | 0.22492    | 0.22492    |   0.0 |  7.83
+Other   |            | 0.01698    |            |       |  0.59
+
+Nlocal:    175 ave 175 max 175 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Nghost:    115 ave 115 max 115 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+Neighs:    0 ave 0 max 0 min
+Histogram: 1 0 0 0 0 0 0 0 0 0
+
+Total # of neighbors = 0
+Ave neighs/atom = 0
+Ave special neighs/atom = 0.96
+Neighbor list builds = 2415
+Dangerous builds = 0
+WARNING: One or more atoms are time integrated more than once (../modify.cpp:283)
+Neighbor list info ...
+  update every 1 steps, delay 0 steps, check yes
+  max neighbors/atom: 2000, page size: 100000
+  master list distance cutoff = 17.9512
+  ghost atom cutoff = 17.9512
+  binsize = 8.97559, bins = 12 12 1
+  3 neighbor lists, perpetual/occasional/extra = 3 0 0
+  (1) pair lj/cut, perpetual, skip from (3)
+      attributes: half, newton off
+      pair build: skip
+      stencil: none
+      bin: none
+  (2) pair gayberne, perpetual, skip from (3)
+      attributes: half, newton off
+      pair build: skip
+      stencil: none
+      bin: none
+  (3) neighbor class addition, perpetual
+      attributes: half, newton off
+      pair build: half/bin/newtoff
+      stencil: half/bin/2d/newtoff
+      bin: standard
+
+Please see the log.cite file for references relevant to this simulation
+
+Total wall time: 0:00:02
+
+
