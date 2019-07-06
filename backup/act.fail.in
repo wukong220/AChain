@@ -1,0 +1,208 @@
+#!/bin/sh
+#phi=0.4, kb, Fa
+# Setup
+echo		screen
+units           lj
+dimension       2
+boundary        p p p
+atom_style      hybrid angle ellipsoid
+newton          off
+
+# settings
+##################################################################
+# LJ potential of beads of chain 
+variable	Epsilon equal 1.0	        	# 4 * LJ potential depth * 4
+variable	Sigma equal 2*0.5	        	# 2 * LJ potential Radius of beads * 2
+variable	Rc_lj equal 1.12246*v_Sigma		# LJ potential cutoff of beeds
+
+# LJ potential of obstacle with beads
+variable    Shape equal 2.0                     # 2D shape
+variable	Ro equal 2*0.5+1.2		            # 2 * LJ potential Radius of obstacles/Size * 2
+variable    Ra equal v_Ro*v_Shape+1.2           # depletion distance of minor axis: 0.6*2
+variable	Rc_o equal v_Ra*v_Rc_lj	        	# LJ potential cutoff of obstacles
+variable	R1 equal (v_Ro+v_Sigma)/2       	# LJ potential between beads and obstacles  
+variable	Rc_1 equal (v_Ra+v_Sigma)*v_Rc_lj/2	# LJ potential cutoff of beads and obstacles
+
+# Soft potential
+variable	R equal 2*0.5		            	# minor axis
+variable    Rb equal v_R*v_Shape                # long axis
+variable	R2 equal (v_Rb+v_Sigma)/2           # sigma of pair potential 
+variable	Rc_2 equal (v_Rb+v_Sigma)*v_Rc_lj/2	# cutoff of pair potential
+variable	Rc_s equal (v_Rb+v_Sigma)*v_Rc_lj/2+0.5     # Soft potential cutoff distance/Interval
+variable	Pre_soft equal ramp(0.0,10000.0)	    # Soft prefactor
+variable    R3 equal (v_R+v_Sigma)/2
+# Spring and bending potential of chain
+variable	Ks equal 2*350.0	# 2 * Spring efficiency * 2 
+variable	R0 equal 1.05		# Spring equilibrium distance
+variable	Fa equal 1.0		# Active Force
+variable	Kb equal 2*1.0		# 2 * Bending efficiency * 2
+variable	Theta0 equal 180.0	# Bending equilibrium degree
+
+# Langevin equation
+variable	Bin equal 0.8		# Neighbor bin
+variable	T0 equal 1.0		# Original temperature 
+variable	Te equal 1.0		# End temperature
+variable	Gamma equal 0.001	# Friction efficiency 
+#variable	Rand equal ramp(18238, 765234746)	# Seed of white noise
+variable	Seed equal 765234746
+
+# run time
+variable	dt equal 0.001		# Timestep
+
+variable	Nf_equ equal 10		# number of frames
+variable	Tpf_equ equal 10000
+variable	Tequ equal ${Nf_equ}*${Tpf_equ}
+
+variable	Nf_equ0 equal 20	            	# number of frames
+variable	Tpf_equ0 equal 10000				#Timesteps per frame-> initializatio
+variable	Tequ0 equal ${Nf_equ0}*${Tpf_equ0}
+
+variable	Nf_run equal 1000
+variable    Tpf_run equal 100000
+variable	Ttotal equal ${Nf_run}*${Tpf_run}	# Total run steps
+variable	Tpf_run_u equal 5000
+##################################################################
+
+read_restart    001.init.restart
+reset_timestep	0
+# groups
+group			chain type 1 2
+group			obs type 3
+
+set			type 3 shape 2.0 1.0 1.0
+
+reset_timestep    0
+comm_modify vel yes
+
+# potential data
+##################################################################
+pair_style   hybrid/overlay lj/cut ${Rc_lj} soft ${Rc_s}
+pair_coeff   1 1 lj/cut ${Epsilon} ${Sigma}
+pair_coeff   1 2 lj/cut ${Epsilon} ${Sigma}
+pair_coeff   2 2 lj/cut ${Epsilon} ${Sigma}
+pair_coeff   1 3 soft 0.0
+pair_coeff   2 3 soft 0.0
+pair_coeff   3 3 soft 0.0
+fix 		soft1 all adapt 1 pair soft a 1 3 v_Pre_soft
+fix 		soft2 all adapt 1 pair soft a 2 3 v_Pre_soft
+
+# Bond potential
+bond_style      harmonic
+bond_coeff      1 ${Ks} ${R0}
+# special_bonds   lj/coul 1.0 1.0 1.0
+
+# Angle potential
+angle_style     actharmonic
+angle_coeff     1 ${Kb} ${Theta0} 0.0
+##################################################################
+
+
+# minimize energy
+minimize      1.0e-4 1.0e-6 1000 10000
+
+# neighbor
+neighbor	${Bin} bin
+neigh_modify	every 1 delay 0 check yes exclude none
+
+# run dynamical equation
+##################################################################
+#thermo_style custom step c_rot epair etotal press vol #c_shape[1]
+#fix	    	 1 obs npt/asphere temp 1.0 1.0 0.1 iso 0.0 1.0 0.1 tchain 1 pchain 0 mtk no
+#compute_modify 1_temp extra/dof ${dof}
+
+#fix	     	10 obs nve/asphere 
+fix      	11 chain langevin 10 10 ${Gamma} ${Seed} zero yes
+fix			12 chain nve/limit 0.08
+fix	     	13  all enforce2d
+
+compute	     orient all property/atom quati quatj quatk quatw
+compute		shape all property/atom shapex shapey shapez
+#variable        twopoint equal c_msd[4]/4/(step*dt+1.0e-6)
+#variable        fitslope equal slope(f_9)/4/(10*dt)
+
+dump		1 all custom ${Tpf_equ0} 001.init_chain.lammpstrj id type x y z &
+			c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3] 
+dump_modify     1 sort id
+
+# preparation for data gathering
+timestep        0.01
+thermo		1000
+run		    1000
+unfix       soft1 
+unfix       soft2 
+
+# pair potential
+pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 1.0 1.0 ${Rc_2}
+pair_coeff   1 1 lj/cut ${Epsilon} ${Sigma}
+pair_coeff   1 2 lj/cut ${Epsilon} ${Sigma}
+pair_coeff   2 2 lj/cut ${Epsilon} ${Sigma}
+pair_coeff   1 3 gayberne ${Epsilon} ${Rc_2} 1 1 1 1 1 1
+pair_coeff   2 3 gayberne ${Epsilon} ${Rc_2} 1 1 1 1 1 1
+pair_coeff   3 3 gayberne ${Epsilon} ${Ro} 1 1 1 1 1 1
+
+# minimize energy
+#minimize      1.0e-4 1.0e-6 1000 10000
+
+# initialize of chain
+run		${Tequ0}
+unfix   11
+unfix   12
+unfix   13
+
+# run equalibrium
+pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 1.0 1.0 ${Rc_2}
+pair_coeff   1 1 lj/cut ${Epsilon} ${Sigma}
+pair_coeff   1 2 lj/cut ${Epsilon} ${Sigma}
+pair_coeff   2 2 lj/cut ${Epsilon} ${Sigma}
+pair_coeff   1 3 gayberne ${Epsilon} ${R3} 1 1 1 1 1 1
+pair_coeff   2 3 gayberne ${Epsilon} ${R3} 1 1 1 1 1 1
+pair_coeff   3 3 gayberne ${Epsilon} ${Ro} 1 1 1 1 1 1
+
+# acitive force
+angle_coeff     1 ${Kb} ${Theta0} ${Fa}
+
+fix      	11 chain langevin  ${T0} ${Te} ${Gamma} ${Seed} zero yes 
+fix			12 chain nve
+fix	     	13  all enforce2d 
+
+timestep        ${dt}
+run		${Tequ0}
+undump      1
+reset_timestep 0
+
+# compute and output
+# mean-squared-displace of chain
+compute         msd chain msd
+compute         com chain msd com yes
+compute			ave chain msd average yes 
+fix             vm chain vector 1000 c_msd[4]
+fix             vc chain vector 1000 c_com[4]
+fix             va chain vector 1000 c_ave[4]
+variable	   	t equal step*${dt}
+
+#thermo_style	custom step temp c_msd[4] 
+#variable		D equal c_msd[4]
+#fix 			4 Chain print 1000 "$t $D" file print0.07_900_msd.txt screen no 
+fix				msd chain ave/time 1 1 1000 v_t c_msd[4] c_com[4] c_ave[4] file 001_msd.txt 
+
+# orientation and shape of obstacles
+#compute	     rot all temp/asphere
+#compute_modify rot extra/dof ${dof}
+
+dump		1 all custom ${Tpf_run} 001.lammpstrj id type x y z vx vy vz&
+			c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3] 
+dump_modify     1 sort id
+
+dump		2 all custom ${Tpf_run_u} 001u.lammpstrj id type xu yu zu vx vy vz&
+			c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3] 
+dump_modify     2 sort id
+
+dump            3 all custom ${Tpf_run} 001f.lammpstrj id type xu yu zu fx fy fz&
+			c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3]
+dump_modify     3 sort id
+
+#run
+restart         1000 001.a.restart  001.b.restart 
+run		${Ttotal}
+write_restart	001.end.restart 
+##################################################################
