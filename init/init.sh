@@ -5,6 +5,7 @@
 # output: *.in   -> *.restart  init.log
 #                -> *.lammpstrj *.log
 
+dir=$(cd `dirname $0`;pwd)
 N=30
 R=1.0
 D=$(echo "$R * 2" | bc)
@@ -35,6 +36,7 @@ do
     36s/0.1P/${Phi}P/;36s/2.0S/${S}S/;36s/1.0D/${D}D/;" hybrid_ellipsoids.cpp > ${title}.cpp
 	g++ -std=c++11 ${title}.cpp -o ${title}.ellipse
 	chmod 740 ${title}.ellipse && ./${title}.ellipse && rm ${title}.ellipse
+	mkdir ${dir}/src/
 	mv ${title}.cpp ./src/
 
     echo "->\"init.in\"..."
