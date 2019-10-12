@@ -12,15 +12,15 @@ variable	Sigma equal 2*0.5		# 2 * LJ potential Radius of beads * 2
 variable	Rc_lj equal 1.12246*v_Sigma		# LJ potential cutoff of beeds
 
 # LJ potential of obstacle with beads
-variable    Shape equal 4.0                     # 2D shape
-variable	Ro equal 2*1.0+1.4		            # 2 * LJ potential Radius of obstacles/Size * 2
+variable    Shape equal 2.0                     # 2D shape
+variable	Ro equal 2*0.5+1.4		            # 2 * LJ potential Radius of obstacles/Size * 2
 variable    Ra equal v_Ro*v_Shape+1.4           # depletion distance of minor axis: 0.6*2
 variable	Rc_o equal v_Ra*v_Rc_lj	        	# LJ potential cutoff of obstacles
 variable	R1 equal (v_Ro+v_Sigma)/2       	# LJ potential between beads and obstacles  
 variable	Rc_1 equal (v_Ra+v_Sigma)*v_Rc_lj/2	# LJ potential cutoff of beads and obstacles
 
 # Soft potential
-variable	R equal 2*1.0		            	# minor axis
+variable	R equal 2*0.5		            	# minor axis
 variable    Rb equal v_R*v_Shape                # long axis
 variable	R2 equal (v_Rb+v_Sigma)/2           # sigma of pair potential 
 variable	Rc_2 equal (v_Rb+v_Sigma)*v_Rc_lj/2     	# cutoff of pair potential
@@ -31,9 +31,9 @@ variable    R3 equal (v_R+v_Sigma)/2
 # Spring and bending potential of chain
 variable	Ks equal 2*350.0	# 2 * Spring efficiency * 2 
 variable	R0 equal 1.05		# Spring equilibrium distance
-variable	Kb equal 2*50.0		# 2 * Bending efficiency * 2
+variable	Kb equal 2*1.0		# 2 * Bending efficiency * 2
 variable	Theta0 equal 180.0	# Bending equilibrium degree
-variable	Fa equal 10.0		# Active Force
+variable	Fa equal 1.0		# Active Force
 
 # Langevin equation
 variable	Bin equal 0.8		# Neighbor bin
@@ -46,25 +46,25 @@ variable	Seed equal 765234746
 # run time
 variable	dt equal 0.001		# Timestep
 # initialization obstacles
-variable	Nf_equ equal 10		# number of frames
-variable	Tpf_equ equal 10000
+variable	Nf_equ equal 5		# number of frames
+variable	Tpf_equ equal 100000
 variable	Tequ equal ${Nf_equ}*${Tpf_equ}
 
-variable	Nf_equ0 equal 10		# number of frames
+variable	Nf_equ0 equal 20		# number of frames
 variable	Tpf_equ0 equal 10000				#Timesteps per frame-> initialization
 variable	Tequ0 equal ${Nf_equ0}*${Tpf_equ0}
 
 # for restart
-variable	Nf_run equal 50	
-#variable	Tpf_run equal 100000
-variable	Trestart equal 10000		#restart time
-variable	Ttotal equal ${Nf_run}*${Trestart}	# Total run steps
-
+variable	Nf_run equal 500	
+variable	Tpf_run equal 10000
+variable	Trestart equal 1000		#restart time
+variable	Ttotal equal ${Nf_run}*${Tpf_run}	# Total run steps
+variable	Tpf_run_u equal 5000
 
 read_restart	001.init.restart
 reset_timestep		0
 group			chain type 1 2 
-set			type 3 shape 8.0 2.0 2.0
+set			type 3 shape 2.0 1.0 1.0
 
 # requilibration run2 on dense system 
 # soft potential
@@ -85,7 +85,7 @@ bond_coeff      1 ${Ks} ${R0}
 
 # Angle potential
 angle_style     actharmonic
-angle_coeff     1 ${Kb} ${Theta0} 0.0
+angle_coeff     1 100 ${Theta0} 0.0
 
 # minimize energy
 minimize      1.0e-4 1.0e-6 1000 10000
@@ -100,7 +100,7 @@ fix         2 all enforce2d
 
 compute	     orient all property/atom quati quatj quatk quatw
 compute		shape all property/atom shapex shapey shapez
-dump		1 all custom ${Tpf_equ0} test.lammpstrj id type x y z &
+dump		1 all custom ${Tpf_equ0} 001.chain_init.lammpstrj id type x y z &
 			c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3] 
 dump_modify     1 sort id
 
@@ -108,17 +108,17 @@ dump_modify     1 sort id
 thermo      1000
 timestep	0.01
 
-run	     1000
+run	     10000
 unfix soft1
 unfix soft2
 
 # pair potential
-pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 1.0 1.0 ${R2}
+pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 1.0 1.0 ${Rc_2}
 pair_coeff   1 1 lj/cut ${Epsilon} ${Sigma}
 pair_coeff   1 2 lj/cut ${Epsilon} ${Sigma}
 pair_coeff   2 2 lj/cut ${Epsilon} ${Sigma}
-pair_coeff   1 3 gayberne ${Epsilon} ${Rc_2} 1 1 1 1 1 1  #1000
-pair_coeff   2 3 gayberne ${Epsilon} ${Rc_2} 1 1 1 1 1 1  #1000
+pair_coeff   1 3 gayberne ${Epsilon} ${R2} 1 1 1 1 1 1  #1000
+pair_coeff   2 3 gayberne ${Epsilon} ${R2} 1 1 1 1 1 1  #1000
 pair_coeff   3 3 gayberne ${Epsilon} ${Ro} 1 1 1 1 1 1  #1000
 
 #run
@@ -128,7 +128,6 @@ unfix   13
 unfix   14
 ##################################################################
 
-
 # pair potential
 pair_style   hybrid/overlay lj/cut ${Rc_lj} gayberne 1.0 1.0 1.0 ${Rc_2}
 pair_coeff   1 1 lj/cut ${Epsilon} ${Sigma}
@@ -137,6 +136,7 @@ pair_coeff   2 2 lj/cut ${Epsilon} ${Sigma}
 pair_coeff   1 3 gayberne ${Epsilon} ${R3} 1 1 1 1 1 1  #1000
 pair_coeff   2 3 gayberne ${Epsilon} ${R3} 1 1 1 1 1 1  #1000
 pair_coeff   3 3 gayberne ${Epsilon} ${Ro} 1 1 1 1 1 1  #1000
+special_bonds lj 1.0 1.0 1.0
 
 # Angle potential
 angle_style     actharmonic
@@ -151,5 +151,26 @@ run		${Tequ0}
 unfix   14
 
 fix	    	14 chain nve
-run		${Tequ0}
+run		${Tequ}
+undump      1
+reset_timestep 0
+
+#output
+dump	    	1 all custom ${Tpf_run} 001.lammpstrj id type x y z vx vy vz&
+		    	c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3] 
+dump_modify     1 sort id
+
+dump	    	2 all custom ${Tpf_run_u} 001u.lammpstrj id type xu yu zu vx vy vz&
+		    	c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3] 
+dump_modify     2 sort id
+
+dump            3 all custom ${Tpf_run} 001f.lammpstrj id type xu yu zu fx fy fz&
+			    c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3]
+dump_modify     3 sort id
+
+#run
+restart         ${Trestart} 001.a.restart  001.b.restart 
+run	        	${Ttotal}
+write_restart	001.end.restart 
 ##################################################################
+

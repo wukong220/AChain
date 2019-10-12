@@ -54,10 +54,9 @@ variable	Tpf_equ0 equal 10000				#Timesteps per frame-> initialization
 variable	Tequ0 equal ${Nf_equ0}*${Tpf_equ0}
 
 # for restart
-variable	Nf_run equal 20	
+variable	Nf_run equal 10	
 #variable	Tpf_run equal 100000
-# for **different structures**
-variable	Trestart equal 100000		#restart time
+variable	Trestart equal 50000		#restart time
 variable	Ttotal equal ${Nf_run}*${Trestart}	# Total run steps
 ##################################################################
 

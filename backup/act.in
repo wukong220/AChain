@@ -75,7 +75,7 @@ pair_coeff   2 2 lj/cut 1.0 1.0
 pair_coeff   1 3 soft 0.0
 pair_coeff   2 3 soft 0.0
 pair_coeff   3 3 soft 0.0
-ix 		soft1 all adapt 1 pair soft a 1 3 v_Pre_soft
+fix 		soft1 all adapt 1 pair soft a 1 3 v_Pre_soft
 fix 		soft2 all adapt 1 pair soft a 2 3 v_Pre_soft
 
 # Bond potential
