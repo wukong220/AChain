@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ "$1" == "init.in" ]
+then 
+  chmod 744 Init_Linux.sh 
+  ./Init_Linux.sh 
+elif [ "$1" == "ellipse.in" ]
+then 
+    chmod 744 Ellipse.sh 
+    ./Ellipse.sh 
+elif [ "$1" == "act.in" ]
+then 
+       chmod 744 Act.sh 
+       ./Act.sh 
+else
+  echo "---///   Usage: ./go init/eps/act.in  ///---"
+fi 
