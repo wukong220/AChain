@@ -1,0 +1,214 @@
+#!/bin/sh
+# Setup
+echo		screen
+units           lj
+dimension       2
+boundary        p p p
+atom_style      hybrid angle ellipsoid
+#newton          off
+
+# settings
+##################################################################
+# LJ potential of beads of chain 
+variable	Epsilon equal 4*1.0		# 4 * LJ potential depth * 4
+variable	Sigma equal 2*0.5		# 2 * LJ potential Radius of beads * 2
+variable    Rcut equal 1.12246
+variable	Rc_lj equal v_Rcut*v_Sigma		# LJ potential cutoff of beeds
+variable    Ke equal 10.0           # repulsive LJ potential
+
+
+# LJ potential of obstacle with beads
+variable    Shape equal 2.0                     # 2D shape
+variable    SE equal 1.0/(v_Shape*v_Shape)     # relative epsilon
+variable	Ro equal 2*0.5		            # 2 * LJ potential Radius of obstacles/Size * 2
+variable    Rb equal v_Ro*v_Shape           # depletion distance of minor axis: 0.6*2
+variable	Rc_o equal v_Ro*v_Rc_lj	        	# LJ potential cutoff of obstacles
+variable	R12 equal (v_Ro+v_Sigma)/2.0    	# LJ potential between beads and obstacles  
+variable	Rc_12 equal v_R12*v_Rc_lj	# LJ potential cutoff of beads and obstacles
+variable    Roe equal v_Ro+1.25*v_Sigma # enlarge obstacles for chain to pass
+variable    Rc_oe equal v_Roe*v_Rc_lj   
+
+
+# Soft potential
+variable	Rc_s equal (v_Rb+v_Sigma)/2+0.25    # (v_Rb+v_Sigma)*v_Rc_lj/2+0.5     # Soft potential cutoff distance/Interval
+variable	Pre_soft1 equal ramp(0.0,5000.0) 	# Soft prefactor
+variable	Pre_soft2 equal ramp(0.0,10000.0)	# Soft prefactor
+
+
+# Spring and bending potential of chain
+variable	Ks equal 2*1350.0	# 2 * Spring efficiency * 2 
+variable	R0 equal 1.05		# Spring equilibrium distance
+variable	Kb equal 2*50.0		# 2 * Bending efficiency * 2
+variable	Theta0 equal 180.0	# Bending equilibrium degree
+variable	Fa equal 1.0		# Active Force
+
+
+# Langevin equation
+variable	Bin equal 0.8		# N eighbor bin
+variable	T0 equal 1.0		# Original temperature 
+variable	Te equal 1.0		# End temperature
+variable	Gamma equal 0.001	# Friction efficiency 
+#variable	Rand equal ramp(18238, 765234746)	# Seed of white noise
+variable	Seed equal 765234746
+
+# run time
+variable	dt equal 0.001		# Timestep
+
+# initialization obstacles
+variable	Nf_ellipse equal 10		# number of frames
+# ** for different structure**
+variable	Tpf_ellipse equal 10000				#Timesteps per frame-> initialization
+variable	T_ellipse equal ${Nf_ellipse}*${Tpf_ellipse}
+
+#restart
+variable	Trestart equal 100000		#restart time: no less than T_ellipsee
+
+# for restart
+variable	Nf_run equal 5	
+#variable	Tpf_run equal 100000
+variable	Ttotal equal ${Nf_run}*${Trestart}	# Total run steps
+##################################################################
+
+
+read_restart	Title.restart
+
+# groups
+group			chain type 1 2 
+group			obs type 3
+#variable     dof equal count(chain)+2
+
+comm_modify vel yes
+
+# potential data
+##################################################################
+pair_style   gayberne 1.0 1.0 1.0 ${Rc_lj}
+pair_coeff   1 1 ${Epsilon} ${Sigma} 1 1 1 1 1 1 ${Rc_lj} 
+pair_coeff   1 2 ${Epsilon} ${Sigma} 1 1 1 1 1 1 ${Rc_lj} 
+pair_coeff   2 2 ${Epsilon} ${Sigma} 1 1 1 1 1 1 ${Rc_lj} 
+pair_coeff   1 3 ${Ke} ${R12} 1 1 1 1 ${SE} ${SE} ${Rc_12}  
+pair_coeff   2 3 ${Ke} ${R12} 1 1 1 1 ${SE} ${SE} ${Rc_12}
+pair_coeff   3 3 1000 ${Roe} 1 ${SE} ${SE} 1 ${SE} ${SE} ${Rc_oe}
+
+
+# Bond potential
+bond_style      harmonic
+bond_coeff      1 ${Ks} ${R0}
+special_bonds   lj/coul 1.0 1.0 1.0
+
+
+# Angle potential
+angle_style     actharmonic
+angle_coeff     1 ${Kb} ${Theta0} 0.0
+##################################################################
+
+
+# minimize energy
+minimize      1.0e-4 1.0e-6 1000 10000
+
+# neighbor
+neighbor	${Bin} bin
+neigh_modify	every 1 delay 0 check yes exclude group chain obs
+
+# run dynamical equation
+##################################################################
+
+#thermo_style custom step c_rot epair etotal press vol #c_shape[1]
+#dump            2 all custom 1000 ellipse_init01.lammpstrj id type x y z vx vy vz
+#fix	    	 1 obs npt/asphere temp 1.0 1.0 0.1 iso 0.0 1.0 0.1 tchain 1 pchain 0 mtk no
+#compute_modify 1_temp extra/dof ${dof}
+
+# ellipsoid initialization
+fix      	10 chain langevin 10.0 10.0 ${Gamma} ${Seed}
+fix	     	11 obs nve/asphere 
+fix			12 obs nve/limit 0.05
+fix			14 chain nve/limit 0.08
+fix	     	2  all enforce2d
+
+
+compute	     orient all property/atom quati quatj quatk quatw
+compute		shape all property/atom shapex shapey shapez
+#compute	     rot all temp/asphere
+#compute_modify rot extra/dof ${dof}
+
+# equilibrate 
+reset_timestep	0
+timestep        ${dt}
+thermo		1000
+run		${T_ellipse}
+
+
+# for test equilibrium 
+dump		1 all custom ${Tpf_ellipse} ellipse_init.lammpstrj id type x y z &
+			c_orient[1] c_orient[2] c_orient[3] c_orient[4] c_shape[1] c_shape[2] c_shape[3] 
+dump_modify     1 sort id
+
+
+# restart
+reset_timestep		0
+restart         ${Trestart} init.*.restart 
+run	          ${Ttotal}
+write_restart	Title.restart
+restart         0
+
+
+# chain initialization
+timestep	0.01
+#unfix       10
+unfix		11
+unfix		12
+unfix       14
+unfix		2
+set			type 3 shape ${Rb} ${Ro} ${Ro}
+
+# requilibration run2 on dense system 
+# soft potential
+pair_style   hybrid/overlay lj/cut ${Rc_lj} soft ${Rc_s}
+pair_coeff   1 1 lj/cut ${Epsilon} ${Sigma}
+pair_coeff   1 2 lj/cut ${Epsilon} ${Sigma}
+pair_coeff   2 2 lj/cut ${Epsilon} ${Sigma}
+pair_coeff   1 3 soft 0.0
+pair_coeff   2 3 soft 0.0
+pair_coeff   3 3 soft 0.0
+fix 		soft1 all adapt 1 pair soft a 1 3 v_Pre_soft2
+fix 		soft2 all adapt 1 pair soft a 2 3 v_Pre_soft2
+
+
+# minimize energy
+minimize      1.0e-4 1.0e-6 1000 10000
+
+# neighbor
+neigh_modify	every 1 delay 0 check yes exclude none
+
+#fix      	13 chain langevin 10.0 10.0 ${Gamma} ${Seed} zero yes
+fix			14 chain nve/limit 0.08
+fix         2 all enforce2d
+
+
+#run
+reset_timestep		0
+run	     ${T_ellipse}
+unfix 14
+unfix 2
+unfix soft1
+unfix soft2
+
+# pair potential
+pair_style   gayberne 1.0 1.0 1.0 ${Rc_lj}
+pair_coeff   1 1 ${Ke} ${Sigma} 1 1 1 1 1 1 ${Rc_lj} 
+pair_coeff   1 2 ${Ke} ${Sigma} 1 1 1 1 1 1 ${Rc_lj} 
+pair_coeff   2 2 ${Ke} ${Sigma} 1 1 1 1 1 1 ${Rc_lj} 
+pair_coeff   1 3 ${Ke} ${R12} 1 1 1 1 ${SE} ${SE} ${Rc_12}  
+pair_coeff   2 3 ${Ke} ${R12} 1 1 1 1 ${SE} ${SE} ${Rc_12}
+pair_coeff   3 3 ${Ke} ${Ro} 1 ${SE} ${SE} 1 ${SE} ${SE} ${Rc_o}
+
+# for 2D
+fix      	13 chain langevin ${T0} ${Te} ${Gamma} ${Seed} zero yes
+fix         14 chain nve/limit 0.1
+fix          2 all enforce2d
+
+
+#run
+reset_timestep   0
+run	     ${T_ellipse}
+write_restart	init.restart
+##################################################################
